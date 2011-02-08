@@ -1,13 +1,16 @@
 import hashlib, os
 
 import Filer
+import utils
 
 chunksize = 8192						# file read increment
 
 class FilerSHA1(Filer.Filer):
+	rel_dir = 'sha1'
+
 	def generate_affixes(self,fn):
 		hash = _sha1(fn)
-		return( [os.path.join(_hashpath(hash),hash)] )
+		return [ os.path.join(utils.fn_frag(hash,max_frags=4),hash) ]
 
 def _sha1(fn):
 	sha1 = hashlib.sha1()
@@ -16,11 +19,10 @@ def _sha1(fn):
 			sha1.update(chunk)
 	return sha1.hexdigest()
 
-def _hashpath(hash):
-	return os.path.join(hash[0:2],hash[2:4],hash[4:6])
 
 if __name__ == '__main__':
-	f = FilerSHA1('dirA')
-	print f.generate_affixes(__file__)
-	print f.generate_paths(__file__)
+	f = FilerSHA1()
+	for fn in ['doc/20412080.xml']:
+		print fn
+		print f.generate_relpaths(fn)
 

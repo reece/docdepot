@@ -10,8 +10,6 @@ rnd = random.random()
 Entrez.email = 'reecehart+%s@gmail.com' % rnd
 Entrez.tool = '__file__+%s' % rnd
 
-sys.tracebacklimit = 1
-
 
 class PubMedArticle:
 	def __init__(self,pmid=None):
@@ -36,6 +34,12 @@ class PubMedArticle:
 	@property
 	def authors_str(self):
 		return( '; '.join(self.authors) )
+
+	@property
+	def LastFM1(self):
+		"""return first author's name, in format LastINITS"""
+		au1 = self.art.find('AuthorList/Author')
+		return( au1.find('LastName').text + au1.find('Initials').text )
 
 	@property
 	def year(self):
@@ -83,6 +87,7 @@ if __name__ == '__main__':
 	print a.voliss
 	print a.pages
 	print a.year
+	print a.LastFM1
 
 	a = PubMedArticle(20412080)
 	print a.year
