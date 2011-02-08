@@ -1,11 +1,16 @@
-import random
+import random, sys
 import xml.etree.ElementTree as ET
 
 from Bio import Entrez
 
+from memoized import memoized
+
+
 rnd = random.random()
 Entrez.email = 'reecehart+%s@gmail.com' % rnd
 Entrez.tool = '__file__+%s' % rnd
+
+sys.tracebacklimit = 1
 
 
 class PubMedArticle:
@@ -14,7 +19,6 @@ class PubMedArticle:
 			raise RuntimeError('must provide a PubMed id')
 		self.pmid = pmid
 		self.art = _fetch_article(self.pmid)
-
 
 	@property
 	def title(self):
@@ -57,9 +61,10 @@ class PubMedArticle:
 ############################################################################
 ## Utilities
 
+@memoized
 def _fetch_article(pmid):
 	xml = Entrez.efetch(db='pubmed', id=pmid, retmode='xml').read()
-	art = ET.fromstring(xml).find('PubmedArticle')
+	art = ET.fromstring(xml).find('PubmedArticle/MedlineCitation/Article')
 	#testing: art = ET.parse('doc/20412080.xml').find('PubmedArticle/MedlineCitation/Article')
 	return art
 
@@ -77,4 +82,7 @@ if __name__ == '__main__':
 	print a.jrnl
 	print a.voliss
 	print a.pages
+	print a.year
+
+	a = PubMedArticle(20412080)
 	print a.year
