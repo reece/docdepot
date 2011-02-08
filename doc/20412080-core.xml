@@ -1,0 +1,46 @@
+<PubmedArticleSet>
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">20412080</PMID>
+        <Article PubModel="Print-Electronic">
+            <Journal>
+                <JournalIssue CitedMedium="Internet">
+                    <Volume>77</Volume>
+                    <Issue>6</Issue>
+                    <PubDate>
+                        <Year>2010</Year>
+                        <Month>Jun</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Clinical genetics</Title>
+                <ISOAbbreviation>Clin. Genet.</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>The human phenotype ontology.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>525-34</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText>A standardized, controlled vocabulary allows phenotypic information to be described in an unambiguous fashion in medical publications and databases. The Human Phenotype Ontology (HPO) is being developed in an effort to provide such a vocabulary. The use of an ontology to capture phenotypic information allows the use of computational algorithms that exploit semantic similarity between related phenotypic abnormalities to define phenotypic similarity metrics, which can be used to perform database searches for clinical diagnostics or as a basis for incorporating the human phenome into large-scale computational analysis of gene expression patterns and other cellular phenomena associated with human disease. The HPO is freely available at http://www.human-phenotype-ontology.org.</AbstractText>
+            </Abstract>
+            <Affiliation>Institute for Medical Genetics, Augustenburger Platz 1, 13353 Berlin, Germany. peter.robinson@charite.de</Affiliation>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Robinson</LastName>
+                    <ForeName>P N</ForeName>
+                    <Initials>PN</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Mundlos</LastName>
+                    <ForeName>S</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+            </AuthorList>
+            <ArticleDate DateType="Electronic">
+                <Year>2010</Year>
+                <Month>02</Month>
+                <Day>11</Day>
+            </ArticleDate>
+        </Article>
+    </MedlineCitation>
+</PubmedArticle>
+</PubmedArticleSet>

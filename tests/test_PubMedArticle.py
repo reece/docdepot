@@ -7,8 +7,9 @@ sys.path += [os.path.join(
 	'lib'
 	)]
 
-from DocDepot import PubmedArticle
+from DocDepot.PubMedArticle import PubMedArticle
 
-a = PubmedArticle(20412080)
 
-pprint.pprint(a)
+a = PubMedArticle(20412080)
+
+print a

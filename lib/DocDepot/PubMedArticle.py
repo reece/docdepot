@@ -1,10 +1,10 @@
 import random
-from xml.etree.ElementTree import XML
+import xml.etree.ElementTree as ET
 
 from Bio import Entrez
 
 rnd = random.random()
-Entrez.email = 'reece+%s@berkeley.edu' % rnd
+Entrez.email = 'reecehart+%s@gmail.com' % rnd
 Entrez.tool = '__file__+%s' % rnd
 
 
@@ -13,18 +13,68 @@ class PubMedArticle:
 		if pmid is None:
 			raise RuntimeError('must provide a PubMed id')
 		self.pmid = pmid
-		self.article = __fetch_article(self.pmid)
-		
+		self.art = _fetch_article(self.pmid)
+
+
 	@property
 	def title(self):
-		return self.article.find('PubmedArticle/MedlineCitation/Article/ArticleTitle').text
+		return( self.art.find('ArticleTitle').text )
 
 	@property
 	def jrnl(self):
-		return self.article.find('PubmedArticle/MedlineCitation/Article/Journal/ISOAbbreviation').text
+		return( self.art.find('Journal/ISOAbbreviation').text )
 
-	def __fetch_article(pmid):
-		xml = Entrez.efetch(db='nucleotide', id=pmid, retmode='xml').read()
-		dom = parseString(xml)
-		art = dom.getElementsByTagName('Article')
-		return(art)
+	@property
+	def authors(self):
+		return( map( _au_to_Last_FM,
+					 self.art.findall('AuthorList/Author')))
+
+	@property
+	def authors_str(self):
+		return( '; '.join(self.authors) )
+
+	@property
+	def year(self):
+		return( self.art.find('ArticleDate/Year').text )
+
+	@property
+	def pages(self):
+		return( self.art.find('Pagination/MedlinePgn').text )
+
+	@property
+	def voliss(self):
+		ji = self.art.find('Journal/JournalIssue')
+		return( '%s(%s)' % (ji.find('Volume').text,ji.find('Issue').text) )
+
+
+	def __str__(self):
+		return( '%s (%s. %s, %s:%s)'.format(
+			self.title, self.authors_str, self.jrnl, self.voliss, self.pages) )
+		
+
+
+
+############################################################################
+## Utilities
+
+def _fetch_article(pmid):
+	xml = Entrez.efetch(db='pubmed', id=pmid, retmode='xml').read()
+	art = ET.fromstring(xml).find('PubmedArticle')
+	#testing: art = ET.parse('doc/20412080.xml').find('PubmedArticle/MedlineCitation/Article')
+	return art
+
+def _au_to_Last_FM(au):
+	return( au.find('LastName').text + ' ' + au.find('Initials').text )
+
+
+
+
+if __name__ == '__main__':
+	a = PubMedArticle(20412080)
+	print a.art
+	print a.title
+	print a.authors_str
+	print a.jrnl
+	print a.voliss
+	print a.pages
+	print a.year
