@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 
 import Filer
@@ -9,14 +11,12 @@ class FilerPMID(Filer.Filer):
 	def generate_affixes(self,fn,pmid=None):
 		if pmid is None:
 			pmid = utils.guess_pmid(fn)
-			if pmid is None:
-				raise Exception("Couldn't infer pmid from %s" % (fn))
-		return [pmid]
-
+		if pmid is not None:
+			return [pmid]
+		return ()
 
 if __name__ == '__main__':
 	f = FilerPMID()
-	x = '20412080.pdf'
-	print(x)
-	print('guess_pmid: %s' % (_guess_pmid(x)))
-	print(f.generate_relpaths(x))
+	for fn in Filer.testfiles:
+		print( '* '+fn )
+		print( f.generate_relpaths(fn) )

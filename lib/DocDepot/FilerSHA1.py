@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import hashlib, os
 
 import Filer
@@ -9,8 +11,12 @@ class FilerSHA1(Filer.Filer):
 	rel_dir = 'sha1'
 
 	def generate_affixes(self,fn):
-		hash = _sha1(fn)
-		return [ os.path.join(utils.fn_frag(hash,max_frags=4),hash) ]
+		try:
+			hash = _sha1(fn)
+			return [ os.path.join(utils.fn_frag(hash,max_frags=4),hash) ]
+		except:
+			pass
+		return []
 
 def _sha1(fn):
 	sha1 = hashlib.sha1()
@@ -22,7 +28,6 @@ def _sha1(fn):
 
 if __name__ == '__main__':
 	f = FilerSHA1()
-	for fn in ['doc/20412080.xml']:
-		print fn
-		print f.generate_relpaths(fn)
-
+	for fn in Filer.testfiles:
+		print( '* ' + fn )
+		print( f.generate_relpaths(fn) )

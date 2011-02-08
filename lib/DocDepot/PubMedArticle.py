@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import random, sys
 import xml.etree.ElementTree as ET
 
@@ -80,14 +82,14 @@ def _au_to_Last_FM(au):
 
 if __name__ == '__main__':
 	a = PubMedArticle(20412080)
-	print a.art
-	print a.title
-	print a.authors_str
-	print a.jrnl
-	print a.voliss
-	print a.pages
-	print a.year
-	print a.LastFM1
+	print( a.art )
+	print( a.title )
+	print( a.authors_str )
+	print( a.jrnl )
+	print( a.voliss )
+	print( a.pages )
+	print( a.year )
+	print( a.LastFM1 )
 
 	a = PubMedArticle(20412080)
-	print a.year
+	print( a.year )
