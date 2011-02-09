@@ -10,8 +10,11 @@ urlpatterns = patterns('',
     # Example:
     # (r'^www/', include('www.foo.urls')),
 					   
-	(r'^pubmed/$', pubmed),				
+	(r'^pubmed$', pubmed),				
 	(r'^login/', 'django.contrib.auth.views.login'),
+
+	(r'^static/(?P<path>.*)$', 'django.views.static.serve',
+	 {'document_root': os.path.join(os.path.dirname(__file__),'static')}),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
