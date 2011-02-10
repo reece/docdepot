@@ -22,6 +22,7 @@ urlpatterns = patterns('',
 
 	(r'^pubmed', pubmed),				
 	(r'^login/', 'django.contrib.auth.views.login'),
+	(r'^openid/', include('django_openid_auth.urls')),
 
 	(r'^static/(?P<path>.*)$', 'django.views.static.serve',
 	 {'document_root': os.path.join(os.path.dirname(__file__),'static')}),

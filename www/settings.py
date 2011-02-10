@@ -98,5 +98,20 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
 	# local apps:
+	'django_openid_auth',
 	'docdepot',
 )
+
+AUTHENTICATION_BACKENDS = (
+	'django_openid_auth.auth.OpenIDBackend',
+	'django.contrib.auth.backends.ModelBackend',
+)
+		
+OPENID_CREATE_USERS = True
+OPENID_UPDATE_DETAILS_FROM_SREG = True
+#OPENID_SSO_SERVER_URL = 'https://login.launchpad.net/'
+#OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=locusdev.net'
+LOGIN_URL = '/openid/login/'
+LOGIN_REDIRECT_URL = '/'
+OPENID_USE_AS_ADMIN_LOGIN = False
