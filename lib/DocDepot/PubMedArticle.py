@@ -21,12 +21,8 @@ class PubMedArticle:
 		self.art = _fetch_article(self.pmid)
 
 	@property
-	def title(self):
-		return( self._get('ArticleTitle') )
-
-	@property
-	def jrnl(self):
-		return( self._get('Journal/ISOAbbreviation') )
+	def abstract(self):
+		return( self._get('Abstract/AbstractText') )
 
 	@property
 	def authors(self):
@@ -38,23 +34,37 @@ class PubMedArticle:
 		return( '; '.join(self.authors) )
 
 	@property
-	def LastFM1(self):
+	def author1_lastfm(self):
 		"""return first author's name, in format LastINITS"""
 		au1 = self.art.find('AuthorList/Author')
 		return( au1.find('LastName').text + au1.find('Initials').text )
 
 	@property
-	def year(self):
-		return( self._get('Journal/JournalIssue/PubDate/Year') )
-                        
+	def LastFM1(self):
+		return self.author1_lastfm
+
+	@property
+	def jrnl(self):
+		return( self._get('Journal/ISOAbbreviation') )
+
 	@property
 	def pages(self):
 		return( self._get('Pagination/MedlinePgn') )
 
 	@property
+	def title(self):
+		return( self._get('ArticleTitle') )
+
+	@property
 	def voliss(self):
 		ji = self.art.find('Journal/JournalIssue')
 		return( '%s(%s)' % (ji.find('Volume').text,ji.find('Issue').text) )
+
+	@property
+	def year(self):
+		return( self._get('Journal/JournalIssue/PubDate/Year') )
+                        
+
 
 
 	def _get(self,tag):

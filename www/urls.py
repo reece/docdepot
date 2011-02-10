@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     #('^$', 'redirect_to', {'url' : '/pubmed'}),
 
 	(r'^pubmed', pubmed),				
+	(r'^help', help),				
 	(r'^login/', 'django.contrib.auth.views.login'),
 	(r'^openid/', include('django_openid_auth.urls')),
 

@@ -1,33 +1,44 @@
-<html>
-  <head>
-	<title>DocDepot: {{ page_title }}</title>
-  </head>
+{% extends "base.html" %}
 
-  <body>
-	<img width="200px" src="/static/media/geneticus-fist.gif" style="float:right;clear:right;">
-	<h1>{{ page_title }}</h1>
-	Hello, {{ user.username }}
-	{% if pmid %}
-	<br><a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ pmid }}">{{ pmid }}</a>
-	<dl>
+{% block page_title %}DocDepot &raquo; {{ title }}{% endblock %}
+{% block title %}DocDepot &raquo; {{ title }}{% endblock %}
+{% block snippet %}direct access to scientific references at Locus{% endblock %}
+
+{% block content %}
+<p>Welcome to the Locus Library.  For a given PubMed identifer, this page
+will provide an internal link to the reference if available, or links
+to document delivery services through which the reference may be
+ordered.  This page is provided exclusively for use by Locus
+employees. [<a href="/help">help</a>]</p>
+
+<!-- Hello, {{ user.username }} -->
+{% if pmid %}
+	Your request: <a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ pmid }}">PMID:{{pmid}}</a>
+
+	{% if rp %}
+	<div class="note">
+	  This paper is in the Locus Library. Click <a href="/library/{{ rp}}">
+	  <img class="icon" src="/static/media/pdf.gif"/></a> to get it.
+	</div>
+	{% else %}
+	<div class="note important">
+	This paper is not in the Locus Library.  Click 
+	<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
+	  <img class="icon" src="/static/media/reprintsdesk.gif"/></a> to get it.
+	</div>
+	{% endif %}
+	
+	<dl class="docsummary">
 	  <dt>{{ pma.title }}</dt>
 	  <dd>{{ pma.authors_str }}
 		<br>{{ pma.jrnl }}
 		<br>{{ pma.year }}
+	  <fieldset>
+		<legend>Abstract</legend>
+		{{ pma.abstract }}
+	  </fieldset>
 	  </dd>
 	</dl>
-	
-	<br>
+{% endif %}
 
-	{% if rp %}
-	This paper is in the Locus Library. Click <a href="/library/{{ rp}}">
-	  <img src="/static/media/pdf.gif"></a> to get it.
-	{% else %}
-	This paper is not in the Locus Library.  Click 
-	<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
-	  <img src="/static/media/reprintsdesk.gif"></a> to get it.
-	{% endif %}
-
-	{% endif %}
-  </body>
-</html>
+{% endblock %} 

@@ -15,7 +15,7 @@ from DocDepot.PubMedArticle import PubMedArticle
 from DocDepot.FilerPMID import FilerPMID
 
 
-@login_required
+#@login_required
 def pubmed(request):
 	template = get_template('pubmed.html')
 	pmid = request.META['QUERY_STRING']
@@ -23,11 +23,20 @@ def pubmed(request):
 	if pmid:
 		pma = PubMedArticle(pmid)
 	variables = Context({
-		'page_title': 'PubMed Lookup',
+		'title': 'PubMed Lookup',
 		'pmid': pmid,
 		'pma': pma,
 		'user': request.user,
 		'rp': FilerPMID().pmid_pdf_exists(pmid),
+		})
+	output = template.render(variables)
+	return HttpResponse(output)
+
+
+def help(request):
+	template = get_template('help.html')
+	variables = Context({
+		'title': 'Help',
 		})
 	output = template.render(variables)
 	return HttpResponse(output)
