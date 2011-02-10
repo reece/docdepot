@@ -28,7 +28,7 @@ urlpatterns = patterns('',
 	(r'^static/(?P<path>.*)$', 'django.views.static.serve',
 	 {'document_root': os.path.join(os.path.dirname(__file__),'static')}),
 
-	(r'^library/(?P<path>.*)$', 'django.views.static.serve',
+	(r'^docdepot/(?P<path>.*)$', 'django.views.static.serve',
 	 {'document_root': Filer.top_dir }),
 
     # Uncomment the admin/doc line below to enable admin documentation:
