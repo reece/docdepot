@@ -45,8 +45,8 @@ class PubMedArticle:
 
 	@property
 	def year(self):
-		return( self._get('ArticleDate/Year') )
-
+		return( self._get('Journal/JournalIssue/PubDate/Year') )
+                        
 	@property
 	def pages(self):
 		return( self._get('Pagination/MedlinePgn') )
@@ -59,7 +59,7 @@ class PubMedArticle:
 
 	def _get(self,tag):
 		n = self.art.find(tag)
-		if n:
+		if n is not None:
 			return n.text
 		return None
 	
