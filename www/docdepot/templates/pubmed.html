@@ -16,9 +16,18 @@
 		<br>{{ pma.year }}
 	  </dd>
 	</dl>
-	<br>This paper is in the Locus Library. Click here to download it. <img src="/static/media/pdf.gif">
-	<br>subscribe me (inop)
-	<br><a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080"><img src="/static/media/reprintsdesk.gif"></a>
+	
+	<br>
+
+	{% if rp %}
+	This paper is in the Locus Library. Click <a href="/library/{{ rp}}">
+	  <img src="/static/media/pdf.gif"></a> to get it.
+	{% else %}
+	This paper is not in the Locus Library.  Click 
+	<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
+	  <img src="/static/media/reprintsdesk.gif"></a> to get it.
+	{% endif %}
+
 	{% endif %}
   </body>
 </html>

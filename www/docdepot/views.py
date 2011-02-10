@@ -7,10 +7,12 @@ from django.template.loader import get_template
 
 import os, sys
 sys.path += [os.path.join(
-	os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))),
+	os.path.dirname(os.path.dirname(os.path.dirname(
+		os.path.realpath(__file__)))),
 	'lib'
 	)]
 from DocDepot.PubMedArticle import PubMedArticle
+from DocDepot.FilerPMID import FilerPMID
 
 
 @login_required
@@ -25,6 +27,7 @@ def pubmed(request):
 		'pmid': pmid,
 		'pma': pma,
 		'user': request.user,
+		'rp': FilerPMID().pmid_pdf_exists(pmid),
 		})
 	output = template.render(variables)
 	return HttpResponse(output)

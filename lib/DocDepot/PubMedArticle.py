@@ -22,11 +22,11 @@ class PubMedArticle:
 
 	@property
 	def title(self):
-		return( self.art.find('ArticleTitle').text )
+		return( self._get('ArticleTitle') )
 
 	@property
 	def jrnl(self):
-		return( self.art.find('Journal/ISOAbbreviation').text )
+		return( self._get('Journal/ISOAbbreviation') )
 
 	@property
 	def authors(self):
@@ -45,11 +45,11 @@ class PubMedArticle:
 
 	@property
 	def year(self):
-		return( self.art.find('ArticleDate/Year').text )
+		return( self._get('ArticleDate/Year') )
 
 	@property
 	def pages(self):
-		return( self.art.find('Pagination/MedlinePgn').text )
+		return( self._get('Pagination/MedlinePgn') )
 
 	@property
 	def voliss(self):
@@ -57,6 +57,12 @@ class PubMedArticle:
 		return( '%s(%s)' % (ji.find('Volume').text,ji.find('Issue').text) )
 
 
+	def _get(self,tag):
+		n = self.art.find(tag)
+		if n:
+			return n.text
+		return None
+	
 	def __str__(self):
 		return( '%s (%s. %s, %s:%s)'.format(
 			self.title, self.authors_str, self.jrnl, self.voliss, self.pages) )

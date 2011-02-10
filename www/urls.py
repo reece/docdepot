@@ -6,6 +6,14 @@ admin.autodiscover()
 
 from docdepot.views import *
 
+# import Filer in order to pull in config from that library
+sys.path += [os.path.join(
+	os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+	'lib'
+	)]
+from DocDepot.Filer import Filer
+
+
 urlpatterns = patterns('',
     # Example:
     # (r'^www/', include('www.foo.urls')),
@@ -17,6 +25,9 @@ urlpatterns = patterns('',
 
 	(r'^static/(?P<path>.*)$', 'django.views.static.serve',
 	 {'document_root': os.path.join(os.path.dirname(__file__),'static')}),
+
+	(r'^library/(?P<path>.*)$', 'django.views.static.serve',
+	 {'document_root': Filer.top_dir }),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),

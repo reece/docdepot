@@ -1,13 +1,14 @@
 from __future__ import print_function
 
-import logging, os, shutil
+import logging, os, shutil, sys
 
 import utils
 
 testfiles = [ '20412080.xml', 'doc/20412080.xml', 'bogus.pdf', __file__ ]
 
 class Filer:
-	top_dir = '/tmp/docdepot'
+	# TODO: top_dir path is defined here and in urls.py document_root
+	top_dir = '/srv/docdepot'
 	in_dir = 'incoming'
 	err_dir = 'errors'
 	rel_dir = None
@@ -33,7 +34,10 @@ class Filer:
 			dstp = os.path.dirname(dst)
 			if not os.path.exists(dstp):
 				os.makedirs(dstp)
-			self.ops[op](src,dst)
+			try:
+				self.ops[op](src,dst)
+			except OSError as e:
+				raise OSError('%s(%s,%s) failed: %s' % (op,src,dst,e))
 			print( '%s(%s,%s)' % (op,src,dst) );
 		return dsts
 
@@ -41,6 +45,8 @@ class Filer:
 		in_path = os.path.join(self.top_dir, self.in_dir)
 		for bn in os.listdir(in_path):
 			src = os.path.join(in_path,bn)
-			print(src)
-			self.refile(src)
-			os.remove(src)
+			try:
+				self.refile(src)
+				os.remove(src)
+			except Exception as e:
+				print(e,file=sys.stderr)

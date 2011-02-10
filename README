@@ -1,0 +1,55 @@
+DocDepot automatically files PDFs from scientific journals into a
+directory structure that is easy to browse.  The intent is to make it easy
+for groups to share journal collections.
+
+Determining appropriate metadata for a file is challenging.  For now, no
+attempt is made to get metadata from the file contents.  Rather, incoming
+files must be renamed as <pmid>.pdf.
+
+
+
+
+
+/srv/doc-depot/
+  incoming/
+  pmid/123.pdf
+  author/au/yr/jrnl - title.pdf
+  locus/pmid_jrnl...
+  sha1/ab/cd/ef/abcdef...xyz.pdf
+
+root/doc-depot/
+  bin/refile
+  lib/...
+  www/
+    .htaccess
+    doc-depot ->
+    
+
+comments
+
+database-backed
+
+multiple sources
+multiple cvs
+support PDF, ppt, 
+ranking
+
+refs/
+incoming/
+by-sha1/hashed/{file,meta}
+by-submitter/
+by-date/ 
+by-doi/
+by-pmid/
+by-author/ {by-year,by-tag} / title -> sha1/
+by-journal/
+by-tag/domain/tag/...
+  domain = AiB, CDD, MeSH, etc.
+
+paper dropped into bucket
+auto parse author, date, title, abstract when possible
+hash of file used as primary key
+
+
+by-doi/doi:xxxx/sha1a/{abstract,paper,authors}...
+by-doi/doi:xxxx/sha1b/abstract

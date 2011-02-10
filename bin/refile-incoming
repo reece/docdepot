@@ -9,7 +9,5 @@ sys.path += [os.path.join(
 import DocDepot
 from DocDepot.FilerMaster import FilerMaster
 
-f = FilerMaster()
+FilerMaster().process_incoming()
 
-for fn in sys.argv:
-	f.refile(fn)

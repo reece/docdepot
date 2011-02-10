@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import re
+import os,re
 
 import Filer
 import utils
@@ -14,6 +14,12 @@ class FilerPMID(Filer.Filer):
 		if pmid is not None:
 			return [pmid]
 		return ()
+
+	def pmid_pdf_exists(self,pmid):
+		rp = os.path.join(self.rel_dir, pmid+'.pdf')
+		if os.path.exists(os.path.join(self.top_dir, rp)):
+			return rp
+		return None
 
 if __name__ == '__main__':
 	f = FilerPMID()
