@@ -28,17 +28,15 @@ employees. [<a href="/help">help</a>]</p>
 	</div>
 	{% endif %}
 	
-	<dl class="docsummary">
-	  <dt>{{ pma.title }}</dt>
-	  <dd>{{ pma.authors_str }}
-		<br>{{ pma.jrnl }}
-		<br>{{ pma.year }}
-	  <fieldset>
-		<legend>Abstract</legend>
-		{{ pma.abstract }}
-	  </fieldset>
-	  </dd>
-	</dl>
+	<div class="docsummary">
+	  <span class="doctitle">{{pma.title}}</span>
+	  <br>{{pma.authors_str}}
+	  <br><i>{{pma.jrnl}}</i>, {{pma.voliss}}:{{pma.pages}} ({{pma.year}}).
+	  <br/><br/>
+	  <u>Abstract</u>
+	  <br/>
+	  {{ pma.abstract }}
+	</div>
 {% endif %}
 
 {% endblock %} 

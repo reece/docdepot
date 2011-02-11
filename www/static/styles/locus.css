@@ -24,13 +24,12 @@ h1 {
 	margin: 0;
 }
 
-dl.docsummary {
-	/* margin: 5px 10px 5px 10px; */
+div.docsummary {
 	padding: 5px;
 	background: lightgray;
 }
 
-dl.docsummary dt {
+span.doctitle {
 	font-weight: bold;
 }
 
