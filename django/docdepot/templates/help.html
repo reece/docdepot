@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block page_title %}Locus Library &raquo; {{ title }}{% endblock %}
+{% block title %}Locus Library &raquo; {{ title }}{% endblock %}
+{% block snippet %}help with the Locus document repository{% endblock %}
+
+{% block content %}
+
+<p>The Locus Library is a repository of scientific publications for use by
+Locus employees.</p>
+
+<div class="note important">
+  The Locus Library outside tool is restricted to employees of Locus.
+  Other users will be denied access and are advised to not select this
+  outside tool.  The remainder of this document is directed at Locus
+  employees.
+</div>
+
+<p>The Locus Library is intended to be accessed directly from PubMed using
+links displayed by NCBI on our behalf.  Users may enable the Locus Library
+service by:
+<ul>
+  <li>Entering PubMed via a URL that specifies the otool parameter:
+	<br><a href="http://www.ncbi.nlm.nih.gov/pubmed?otool=locuslibrary">http://www.ncbi.nlm.nih.gov/pubmed?otool=locuslibrary</a>
+	<br><b>N.B. This URL will not work correctly until our Outside Tool application with NCBI is approved.</b>
+  <li>Selecting Locus Library as the Outside Tool in
+  their <a href="http://www.ncbi.nlm.nih.gov/sites/myncbi/">MyNCBI</a>
+  preferences.
+</ul>
+</p>
+
+<p>When enabled, users should see this button on PubMed result pages:
+<img src="/static/media/locus-library-otool.gif"/>.</p>
+
+<u>Links</u>
+<ul>
+  <li><a href="http://www.ncbi.nlm.nih.gov/books/NBK3803/">More information on the NCBI Outside Tool service</a>
+  <li><a href="mailto:locuslibrary@locusdev.net?Subject=Locus%20Library">Send mail to the maintainers</a>
+</ul>
+
+{% endblock %}

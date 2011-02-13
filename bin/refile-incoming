@@ -1,0 +1,13 @@
+#!/usr/bin/python
+
+import os,sys
+
+sys.path += [os.path.join(
+	os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+	'lib'
+	)]
+import DocDepot
+from DocDepot.FilerMaster import FilerMaster
+
+FilerMaster().process_incoming()
+

@@ -1,0 +1,46 @@
+div.header {
+	border-bottom: thin solid gray;
+	margin-bottom: 10px;
+}
+
+img.icon {
+	margin: 0;
+	vertical-align: middle;
+}
+
+img.logo {
+	width: 100px;
+	opacity: 0.4;
+	margin: 0 10px 0 0;
+	float: left;
+}
+
+span.snippet {
+	color: gray;
+}
+
+h1 {
+	font-variant: small-caps;
+	margin: 0;
+}
+
+div.docsummary {
+	padding: 5px;
+	background: lightgray;
+}
+
+span.doctitle {
+	font-weight: bold;
+}
+
+div.note {
+	margin: 10px 20px 10px 20px;
+	padding: 5px;
+	border: medium solid green;
+	color: green;
+}
+
+div.important {
+	border-color: red;
+	color: red;
+}

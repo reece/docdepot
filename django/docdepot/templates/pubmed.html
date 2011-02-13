@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block page_title %}DocDepot &raquo; {{ title }}{% endblock %}
+{% block title %}DocDepot &raquo; {{ title }}{% endblock %}
+{% block snippet %}direct access to scientific references at Locus{% endblock %}
+
+{% block content %}
+<p>Welcome to the Locus Library.  For a given PubMed identifer, this page
+will provide an internal link to the reference if available, or links
+to document delivery services through which the reference may be
+ordered.  This page is provided exclusively for use by Locus
+employees. [<a href="/help">help</a>]</p>
+
+<!-- Hello, {{ user.username }} -->
+{% if pmid %}
+	Your request: <a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ pmid }}">PMID:{{pmid}}</a>
+
+	{% if rp %}
+	<div class="note">
+	  This paper is in the Locus Library. Click <a href="/docdepot/{{ rp}}">
+	  <img class="icon" src="/static/media/pdf.gif"/></a> to get it.
+	</div>
+	{% else %}
+	<div class="note important">
+	This paper is not in the Locus Library.  Click 
+	<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
+	  <img class="icon" src="/static/media/reprintsdesk.gif"/></a> to get it.
+	</div>
+	{% endif %}
+	
+	<div class="docsummary">
+	  <span class="doctitle">{{pma.title}}</span>
+	  <br>{{pma.authors_str}}
+	  <br><i>{{pma.jrnl}}</i>, {{pma.voliss}}:{{pma.pages}} ({{pma.year}}).
+	  <br/><br/>
+	  <u>Abstract</u>
+	  <br/>
+	  {{ pma.abstract }}
+	</div>
+{% endif %}
+
+{% endblock %} 

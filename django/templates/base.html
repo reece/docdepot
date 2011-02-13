@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<html>
+  <head>
+	<title>Locus &raquo; {% block page_title %}{% endblock %}</title>
+	<link rel="shortcut icon" href="/static/media/fist-logo-32.png" />
+	<link href="/static/styles/locus.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+	<div class="header">
+	  <!-- 
+		 N.B. Ths header has a problem: because the logo is floated, it's
+		 not counted in the bbox of the header div and can flow
+		 outside. It doesn't happen often, fortunately.  The only fix I
+		 know of is to create a table, but I'd like to find the div zen
+		 way.
+		-->
+	  <img class="logo" src="/static/media/geneticus-fist.gif"/>
+	  <h1>{% block title %}{% endblock %}</h1>
+	  <span class="snippet">{% block snippet %}{% endblock %}</span>
+	</div>
+
+	{% block content %}{% endblock %}
+  </body>
+</html>
