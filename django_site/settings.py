@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
-	('Reece Hart', 'reecehart@locusdev.net')
+	('Reece Hart', 'library@locusdev.net')
 )
 
 MANAGERS = ADMINS
@@ -15,7 +15,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'www.sqlite3', # Or path to database file if using sqlite3.
+        'NAME': 'django_site.sqlite3', # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -78,13 +78,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'www.urls'
+ROOT_URLCONF = 'django_site.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	os.path.join(os.path.dirname(__file__), 'templates')
+	os.path.join(os.path.dirname(__file__), 'docdepot', 'templates'),
+	os.path.join(os.path.dirname(__file__), 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -99,7 +100,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 	# local apps:
 	'django_openid_auth',
-	'docdepot.DocDepot',
+	'django_site',
+	'django_site.docdepot',
 )
 
 AUTHENTICATION_BACKENDS = (
