@@ -15,28 +15,40 @@ employees. [<a href="/help">help</a>]</p>
 {% if pmid %}
 	Your request: <a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ pmid }}">PMID:{{pmid}}</a>
 
-	{% if rp %}
-	<div class="note">
-	  This paper is in the Locus Library. Click <a href="/docdepot/{{ rp}}">
-	  <img class="icon" src="/static/media/pdf.gif"/></a> to get it.
-	</div>
+	{% if pma.title %}
+
+		{% if rp %}
+		<div class="note">
+		  This paper is in the Locus Library. Click <a href="/docdepot/{{ rp}}">
+		  <img class="icon" src="/static/media/pdf.gif"/></a> to get it.
+		</div>
+		{% else %}
+		<div class="note important">
+		This paper is not in the Locus Library.  Click 
+		<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
+		  <img class="icon" src="/static/media/reprintsdesk.gif"/></a> to get it.
+		</div>
+		{% endif %}
+		
+		<div class="docsummary">
+		  <span class="doctitle">{{pma.title}}</span>
+		  <br>{{pma.authors_str}}
+		  <br><i>{{pma.jrnl}}</i>, {{pma.voliss}}:{{pma.pages}} ({{pma.year}}).
+		  <br/><br/>
+		  <u>Abstract</u>
+		  <br/>
+		  {{ pma.abstract }}
+		</div>
+
 	{% else %}
-	<div class="note important">
-	This paper is not in the Locus Library.  Click 
-	<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
-	  <img class="icon" src="/static/media/reprintsdesk.gif"/></a> to get it.
-	</div>
+
+		<div class="note important">
+		A search at NCBI using the the PubMed ID you provided returns no
+		results. Your request appears to be invalid.  Note: PubMed Central
+		IDs are not equivalent to PubMed IDs.
+		</div>
+
 	{% endif %}
-	
-	<div class="docsummary">
-	  <span class="doctitle">{{pma.title}}</span>
-	  <br>{{pma.authors_str}}
-	  <br><i>{{pma.jrnl}}</i>, {{pma.voliss}}:{{pma.pages}} ({{pma.year}}).
-	  <br/><br/>
-	  <u>Abstract</u>
-	  <br/>
-	  {{ pma.abstract }}
-	</div>
 {% endif %}
 
 {% endblock %} 

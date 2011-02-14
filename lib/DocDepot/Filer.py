@@ -8,7 +8,7 @@ testfiles = [ '20412080.xml', 'doc/20412080.xml', 'bogus.pdf', __file__ ]
 
 class Filer:
 	# TODO: top_dir path is defined here and in urls.py document_root
-	top_dir = '/srv/docdepot'
+	top_dir = '/srv/locuslibrary/files'
 	in_dir = 'incoming'
 	err_dir = 'errors'
 	rel_dir = None
