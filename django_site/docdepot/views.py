@@ -17,9 +17,11 @@ from DocDepot.FilerPMID import FilerPMID
 
 #@login_required
 def pubmed(request):
-	template = get_template('pubmed.html')
-	pmid = request.META['QUERY_STRING']
 	pma = None
+	pmid = request.META['QUERY_STRING']
+	q_id = request.GET.get('id')
+	if q_id is not None and q_id[0:5] == 'pmid:':
+		pmid = q_id[5:]
 	if pmid:
 		pma = PubMedArticle(pmid)
 	variables = Context({
@@ -29,14 +31,13 @@ def pubmed(request):
 		'user': request.user,
 		'rp': FilerPMID().pmid_pdf_exists(pmid),
 		})
-	output = template.render(variables)
+	output = get_template('pubmed.html').render(variables)
 	return HttpResponse(output)
 
 
 def help(request):
-	template = get_template('help.html')
 	variables = Context({
 		'title': 'Help',
 		})
-	output = template.render(variables)
+	output = get_template('help.html').render(variables)
 	return HttpResponse(output)
