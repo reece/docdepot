@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import logging, os, shutil, sys
+import logging, os, random, shutil, string, sys
 
 import utils
 
@@ -27,9 +27,10 @@ class Filer:
 		afxs = self.generate_affixes(fn)
 		return( map( lambda (a): os.path.join(self.rel_dir,a+ext), afxs ))
 
-	def refile(self,src,op='ln'):
-		dsts = map( lambda (rp): os.path.join(self.top_dir,rp),
-					self.generate_relpaths(src) )
+	def refile(self,src,op='ln',dsts=None):
+		if dsts is None:
+			dsts = map( lambda (rp): os.path.join(self.top_dir,rp),
+						self.generate_relpaths(src) )
 		for dst in dsts:
 			dstp = os.path.dirname(dst)
 			if not os.path.exists(dstp):
@@ -49,4 +50,17 @@ class Filer:
 				self.refile(src)
 				os.remove(src)
 			except Exception as e:
-				print(e,file=sys.stderr)
+				print(e,file=sys.stderr) # TODO: use logging
+				self.refile_error(src)
+				
+	def refile_error(self,src):
+		try:
+			self.refile(src,op='mv',
+				dsts=[os.path.join(self.top_dir,self.err_dir,
+								   os.path.basename(src)+'-'+_random_string())])
+		except Exception as e:
+			print(e,file=sys.stderr) # TODO: use logging
+			
+
+def _random_string(N=6):
+	return ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(N))
