@@ -13,7 +13,7 @@ class FilerPMID(Filer.Filer):
 			pmid = utils.guess_pmid(fn)
 		if pmid is not None:
 			return [pmid]
-		return ()
+		return []
 
 	def pmid_pdf_exists(self,pmid):
 		rp = os.path.join(self.rel_dir, pmid+'.pdf')
