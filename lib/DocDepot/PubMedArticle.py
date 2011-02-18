@@ -1,12 +1,13 @@
 from __future__ import print_function
 
-import random, sys
+import logging, pprint, random, sys
 import xml.etree.ElementTree as ET
 
 from Bio import Entrez
 
 from memoized import memoized
 
+logger = logging.getLogger(__package__)
 
 rnd = random.random()
 Entrez.email = 'reecehart+%s@gmail.com' % rnd
@@ -26,8 +27,8 @@ class PubMedArticle:
 
 	@property
 	def authors(self):
-		return( map( _au_to_Last_FM,
-					 self.art.findall('AuthorList/Author')))
+		authors = map( _au_to_Last_FM, self.art.findall('AuthorList/Author'))
+		return( [ a for a in authors if a is not None ] )
 
 	@property
 	def authors_str(self):
@@ -62,9 +63,13 @@ class PubMedArticle:
 
 	@property
 	def year(self):
-		return( self._get('Journal/JournalIssue/PubDate/Year') )
+		y = self._get('Journal/JournalIssue/PubDate/Year')
+		if y is None:
+			# case applicable for pmid:9887384 (at least)
+			y = self._get('Journal/JournalIssue/PubDate/MedlineDate')[0:4]
+		assert y is not None
+		return y
                         
-
 
 
 	def _get(self,tag):
@@ -91,8 +96,13 @@ def _fetch_article(pmid):
 	return art
 
 def _au_to_Last_FM(au):
+	if au.find('LastName') is None:
+		return;
 	return( au.find('LastName').text + ' ' + au.find('Initials').text )
 
+
+# This helps debug:
+# curl 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=19483685'
 
 
 
