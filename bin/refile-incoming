@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os,sys
+import logging,os,sys
 
 sys.path += [os.path.join(
 	os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
@@ -9,5 +9,6 @@ sys.path += [os.path.join(
 import DocDepot
 from DocDepot.FilerMaster import FilerMaster
 
-FilerMaster().process_incoming()
+logging.basicConfig(level=logging.DEBUG)
 
+FilerMaster().process_incoming()

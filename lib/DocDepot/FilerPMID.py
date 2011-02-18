@@ -17,7 +17,7 @@ class FilerPMID(Filer.Filer):
 
 	def pmid_pdf_exists(self,pmid):
 		rp = os.path.join(self.rel_dir, pmid+'.pdf')
-		if os.path.exists(os.path.join(self.top_dir, rp)):
+		if os.path.exists(os.path.join(self.files_path, rp)):
 			return rp
 		return None
 

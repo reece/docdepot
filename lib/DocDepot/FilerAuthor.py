@@ -16,6 +16,9 @@ class FilerAuthor(Filer.Filer):
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
 		ti = pma.title.rstrip('.')
+		for au in pma.authors:
+			self.logger.debug(au)
+		exit
 		return map( lambda (au): os.path.join( au, pma.year, ti ),
 					pma.authors )
 

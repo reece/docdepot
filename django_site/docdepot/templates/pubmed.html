@@ -19,13 +19,13 @@ employees. [<a href="/help">help</a>]</p>
 
 		{% if rp %}
 		<div class="note">
-		  This paper is in the Locus Library. Click <a href="/docdepot/{{ rp}}">
+		  This paper is in the Locus Library. Click <a href="/docdepot/{{rp}}">
 		  <img class="icon" src="/static/media/pdf.gif"/></a> to get it.
 		</div>
 		{% else %}
 		<div class="note important">
 		This paper is not in the Locus Library.  Click 
-		<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:20412080">
+		<a href="http://www.reprintsdesk.com/landing/pubmed.aspx?sid=Entrez:PubMed&id=pmid:{{pmid}}">
 		  <img class="icon" src="/static/media/reprintsdesk.gif"/></a> to get it.
 		</div>
 		{% endif %}
