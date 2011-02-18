@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+use Data::Dumper;
+
+use FindBin;
+use lib "$FindBin::Bin";
+use Confluence;
+
+my ($rpc_url,$user,$pw,$space,$page_id) = @ARGV;
+# https://confluence.locusdev.net/rpc/xmlrpc user pw library 3015452
+
+
+my $c = new Confluence($rpc_url, $user, $pw);
+my $atts = $c->getAttachments($page_id);
+my $N = $#$atts+1;
+print(STDERR "downloading $N attachments...\n");
+
+for(my $i=0; $i<$N; $i++) {
+  my $atti = $atts->[$i];
+  my $dst = "dl/$atti->{fileName}";
+
+  next if ( -e $dst );
+  if ($atti->{title} =~ m/(?:18644040)_/) {
+	warn("$i/$N. $atti->{title} ignored\n");
+	next;
+  }
+
+  my $att = $c->getAttachmentData($page_id,$atti->{fileName},0);
+  open(F,">$dst")
+	|| die("$dst: $!");
+  print(F $att);
+  close(F);
+
+  print(STDERR "saved $dst\n");
+}
