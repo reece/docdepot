@@ -11,14 +11,14 @@ class FilerMaster(Filer.Filer):
 		self.aufiler = FilerAuthor.FilerAuthor()
 		self.locusfiler = FilerLocus.FilerLocus()
 		self.pmidfiler = FilerPMID.FilerPMID()
-		#self.sha1filer = FilerSHA1.FilerSHA1()
+		self.sha1filer = FilerSHA1.FilerSHA1()
 
 	def generate_relpaths(self,fn):
 		return(
-			self.pmidfiler.generate_relpaths(fn) 
-			#+ self.sha1filer.generate_relpaths(fn)
+			self.aufiler.generate_relpaths(fn)
 			+ self.locusfiler.generate_relpaths(fn)
-			+ self.aufiler.generate_relpaths(fn)
+			+ self.pmidfiler.generate_relpaths(fn)
+			+ self.sha1filer.generate_relpaths(fn)
 			)
 
 		

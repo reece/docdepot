@@ -18,7 +18,8 @@ class Filer:
 		'cp': shutil.copyfile,
 		'mv': shutil.move,
 		'ln': os.link,
-		'sl': lambda (src,dst): os.symlink(os.path.relpath(src,dst),dst)
+		'sl': lambda src,dst: os.symlink(os.path.relpath(src,dst),dst),
+		'nop': lambda src,dst: 0
 		}
 
 	def generate_affixes(self,fn):
@@ -29,20 +30,19 @@ class Filer:
 		afxs = self.generate_affixes(fn)
 		return( map( lambda (a): os.path.join(self.rel_dir,a+ext), afxs ))
 
-	def process_incoming(self):
+	def process_incoming(self,op='ln'):
 		in_rp = os.path.join(self.files_path, self.in_dir)
 		for bn in os.listdir(in_rp):
 			src = os.path.join(in_rp,bn)
 			self.logger.debug('processing '+src)
-			dsts = map( lambda (rp): os.path.join(self.files_path,rp),
-						self.generate_relpaths(src) )
 			try:
-				self.refile(src,dsts)
+				dsts = map( lambda (rp): os.path.join(self.files_path,rp),
+							self.generate_relpaths(src) )
+				self.refile(src,dsts,op=op)
 				os.remove(src)
 			except Exception as e:
 				self.logger.error(e)
 				self.refile_error(src)
-			exit
 
 	def refile(self,src,dsts,op='ln'):
 		for dst in dsts:

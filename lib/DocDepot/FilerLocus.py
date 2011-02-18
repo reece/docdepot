@@ -13,9 +13,7 @@ class FilerLocus(Filer.Filer):
 			if pmid is None:
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
-		if pma is None:
-			raise Exception("Couldn't find PubMed id %s" % (pmid))
-		return ['{0.pmid}_{0.year}_{0.jrnl}_{0.LastFM1}'.format(pma)]
+		return [u'{0.pmid}_{0.year}_{0.jrnl}_{0.LastFM1}'.format(pma)]
 
 
 if __name__ == '__main__':

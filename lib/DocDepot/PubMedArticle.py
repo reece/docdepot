@@ -20,6 +20,8 @@ class PubMedArticle:
 			raise RuntimeError('must provide a PubMed id')
 		self.pmid = pmid
 		self.art = _fetch_article(self.pmid)
+		if self.art is None:
+			raise Exception("Couldn't find PubMed info for pmid:"+pmid)
 
 	@property
 	def abstract(self):
@@ -27,8 +29,8 @@ class PubMedArticle:
 
 	@property
 	def authors(self):
-		authors = map( _au_to_Last_FM, self.art.findall('AuthorList/Author'))
-		return( [ a for a in authors if a is not None ] )
+		authors = [ _au_to_Last_FM(au) for au in self.art.findall('AuthorList/Author') ]
+		return authors
 
 	@property
 	def authors_str(self):
@@ -38,7 +40,8 @@ class PubMedArticle:
 	def author1_lastfm(self):
 		"""return first author's name, in format LastINITS"""
 		au1 = self.art.find('AuthorList/Author')
-		return( au1.find('LastName').text + au1.find('Initials').text )
+		assert au1 is not None
+		return _au_to_Last_FM(au1)
 
 	@property
 	def LastFM1(self):
@@ -69,8 +72,6 @@ class PubMedArticle:
 			y = self._get('Journal/JournalIssue/PubDate/MedlineDate')[0:4]
 		assert y is not None
 		return y
-                        
-
 
 	def _get(self,tag):
 		n = self.art.find(tag)
@@ -96,10 +97,15 @@ def _fetch_article(pmid):
 	return art
 
 def _au_to_Last_FM(au):
-	if au.find('LastName') is None:
-		return;
-	return( au.find('LastName').text + ' ' + au.find('Initials').text )
-
+	if au is None:
+		return
+	lastfm = None
+	if au.find('CollectiveName') is not None:
+		lastfm = au.find('CollectiveName').text
+	if au.find('LastName') is not None:
+		lastfm = au.find('LastName').text + u' ' + au.find('Initials').text 
+	assert lastfm is not None
+	return lastfm
 
 # This helps debug:
 # curl 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=19483685'

@@ -16,15 +16,13 @@ class FilerAuthor(Filer.Filer):
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
 		ti = pma.title.rstrip('.')
-		for au in pma.authors:
-			self.logger.debug(au)
-		exit
-		return map( lambda (au): os.path.join( au, pma.year, ti ),
+		logging.getLogger().info(pma.authors)
+		afxs = map( lambda (au): os.path.join(au,u'%s (%s) %s' % (pma.year,pma.jrnl,ti)),
 					pma.authors )
+		return afxs
 
 
 if __name__ == '__main__':
-	f = FilerAuthor()
-	for fn in Filer.testfiles:
-		print('* '+fn)
-		print(f.generate_relpaths(fn))
+	import logging
+	logging.basicConfig(level=logging.DEBUG)
+	FilerAuthor().process_incoming(op='nop')
