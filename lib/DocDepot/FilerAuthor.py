@@ -16,7 +16,6 @@ class FilerAuthor(Filer.Filer):
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
 		ti = pma.title.rstrip('.')
-		logging.getLogger().info(pma.authors)
 		afxs = map( lambda (au): os.path.join(au,u'%s (%s) %s' % (pma.year,pma.jrnl,ti)),
 					pma.authors )
 		return afxs
