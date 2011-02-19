@@ -7,3 +7,4 @@ syntax: glob
 .gitignore
 www/www.sqlite3
 django_site/django_site.sqlite3
+files

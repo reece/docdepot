@@ -13,6 +13,15 @@ test:
 	cp doc/20412080.xml /tmp/docdepot/incoming
 	python lib/DocDepot/FilerMaster.py
 
+.PHONY: files-dir files-cp
+files: files-dir files-cp
+files-dir:
+	rm -fr files
+	mkdir -p files/incoming
+	chmod 2775 files/incoming
+files-cp:
+	cp -av /srv/locuslibrary/files/dl/1040* files/incoming
+
 
 .PHONY: clean cleaner cleanest
 clean:

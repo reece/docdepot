@@ -1,12 +1,13 @@
 from __future__ import print_function
 
-import logging, os, random, shutil, stat, string, sys
+import filecmp, logging, os, shutil, stat, sys
 import utils
 
-testfiles = [ '20412080.xml', 'doc/20412080.xml', 'bogus.pdf', __file__ ]
+#TODO: on collision, gen unique name
 
 class Filer:
-	top_path = '/srv/locuslibrary'
+	#top_path = '/srv/locuslibrary'
+	top_path = '/srv/locuslibrary/docdepot'
 	files_dir = 'files'
 	files_path = os.path.join(top_path, files_dir)
 	in_dir = 'incoming'
@@ -16,7 +17,7 @@ class Filer:
 	logger = logging.getLogger(__package__)
 	ops = {
 		'cp': shutil.copyfile,
-		'mv': shutil.move,
+		'mv': shutil.move,				# TODO: drop this; too unlike cp/ln/sl
 		'ln': os.link,
 		'sl': lambda src,dst: os.symlink(os.path.relpath(src,dst),dst),
 		'nop': lambda src,dst: 0
@@ -39,36 +40,53 @@ class Filer:
 				dsts = map( lambda (rp): os.path.join(self.files_path,rp),
 							self.generate_relpaths(src) )
 				self.refile(src,dsts,op=op)
-				os.remove(src)
+				os.remove(src)			# TODO: Leave this to the caller
 			except Exception as e:
 				self.logger.error(e)
 				self.refile_error(src)
 
 	def refile(self,src,dsts,op='ln'):
 		for dst in dsts:
+			#  handle cases when dst exists
+			if os.path.exists(dst):
+				if (os.path.samefile(src,dst)
+					or filecmp.cmp(src,dst,shallow=False)):
+					# file is identical (same inode) or same content;
+					# either way, we remove the src if the original op
+					# would have also removed the src.
+					if op in ['mv']:
+						os.remove(src)
+						self.logger.info('removed src file; same-named destination with same content already exists')
+					continue
+				else:
+					# dst exists, but isn't same inode or content
+					# Although there's a potential very rare race here,
+					# we'll catch with exceptions
+					dst = utils.next_version(dst)
+			
+			# make the directory path
 			dstp = os.path.dirname(dst)
 			if not os.path.exists(dstp):
+				# N.B. makedirs(mode=) is subject to umask
+				# easier to set explicitly
 				os.makedirs(dstp)
 				os.chmod(dstp,self.dir_mode)
+			
 			try:
 				self.ops[op](src,dst)
 			except OSError as e:
-				raise OSError('%s(%s,%s) failed: %s' % (op,src,dst,e))
-			self.logger.info( '%s(%s,%s)' % (op,src,dst) );
+				raise OSError('%s(%s,%s): failure: %s' % (op,src,dst,e))
+			self.logger.info( '%s(%s,%s): success' % (op,src,dst) );
 		return dsts
 
 	def refile_error(self,src):
-		def _random_string(N=6):
-			return ''.join(random.choice(
-				string.ascii_lowercase + string.digits) for x in range(N))
+		# TODO: errors should be an Filer
 		root,ext = os.path.splitext(src)
 		dst = os.path.join( self.files_path,
 							self.err_dir,
 							os.path.basename(src) )
 		if os.path.exists(dst):
-			dst = os.path.join( self.files_path,
-								self.err_dir,
-								os.path.basename(root)+'-'+_random_string()+ext )
+			dst = utils.unique_name(dst)
 		try:
 			self.refile(src,dsts=[dst],op='mv')
 		except Exception as e:
