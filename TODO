@@ -1,8 +1,12 @@
 TOP PRIORITIES
-* submit otool
-* write library/README
-* openid login
+* FilerConfluence
+* check conflict resolution   
+* FilerGoogle   
+
+SHOULD
+* use FilerDone and FilerError; see note in Filer.process_incoming
 
 
 LATER
+* openid login
 * RSS-feeds

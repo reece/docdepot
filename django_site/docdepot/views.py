@@ -18,12 +18,16 @@ from DocDepot.FilerPMID import FilerPMID
 #@login_required
 def pubmed(request):
 	pma = None
+	error = None
 	pmid = request.META['QUERY_STRING']
 	q_id = request.GET.get('id')
 	if q_id is not None and q_id[0:5] == 'pmid:':
 		pmid = q_id[5:]
 	if pmid:
-		pma = PubMedArticle(pmid)
+		try:
+			pma = PubMedArticle(pmid)
+		except Exception as e:
+			pass
 	variables = Context({
 		'title': 'PubMed Lookup',
 		'pmid': pmid,
