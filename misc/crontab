@@ -1,0 +1,2 @@
+# m h  dom mon dow   command
+* * * * * /srv/locuslibrary/docdepot/bin/refile-incoming >/srv/locuslibrary/logs/refile-incoming.log 2>&1
