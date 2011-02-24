@@ -62,6 +62,10 @@ class PubMedArticle:
 	@property
 	def voliss(self):
 		ji = self.art.find('Journal/JournalIssue')
+		if ji.find('Volume') is None:
+			return
+		if ji.find('Issue') is None:
+			return ji.find('Volume').text
 		return( '%s(%s)' % (ji.find('Volume').text,ji.find('Issue').text) )
 
 	@property

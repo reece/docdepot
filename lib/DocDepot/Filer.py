@@ -59,6 +59,8 @@ class Filer:
 				# FilerDone/FilerError
 				os.remove(src)
 			except Exception as e:
+				# FIXME: catching "Exceptions" makes debugging painful.
+				# Be more careful about what's caught
 				self.logger.error(e)
 				self.refile_error(src)
 

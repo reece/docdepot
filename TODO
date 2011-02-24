@@ -1,11 +1,12 @@
 TOP PRIORITIES
-* FilerConfluence
-* check conflict resolution   
-* FilerGoogle   
 
+   
 SHOULD
 * use FilerDone and FilerError; see note in Filer.process_incoming
-
+* FilerConfluence
+* FilerGoogle   
+* check conflict resolution   
+* fix ops across device links
 
 LATER
 * openid login
