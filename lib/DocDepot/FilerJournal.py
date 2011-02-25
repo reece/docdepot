@@ -18,7 +18,7 @@ class FilerJournal(Filer.Filer):
 			if pmid is None:
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
-		ti = pma.title.rstrip('.')
+		ti = utils.elide_string(pma.title.rstrip('.'),max_len=150)
 		y = pma.year
 		if y is None:
 			y = u''

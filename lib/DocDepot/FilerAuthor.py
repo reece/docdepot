@@ -6,8 +6,10 @@ import Filer
 import PubMedArticle
 import utils
 
+
 class FilerAuthor(Filer.Filer):
 	rel_dir = 'author'
+	max_path = 255						# can't find MAXPATHLEN in python libs
 
 	def generate_affixes(self,fn,pmid=None):
 		if pmid is None:
@@ -15,7 +17,7 @@ class FilerAuthor(Filer.Filer):
 			if pmid is None:
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
-		ti = pma.title.rstrip('.')
+		ti = utils.elide_string(pma.title.rstrip('.'),max_len=150)
 		afxs = map( lambda (au): os.path.join(au,u'%s (%s) %s' % (pma.year,pma.jrnl,ti)),
 					pma.authors )
 		return afxs

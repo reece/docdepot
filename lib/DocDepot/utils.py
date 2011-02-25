@@ -29,6 +29,12 @@ def next_version(path):
 		i += 1
 	return path
 
+def elide_string(str,max_len,marker='...'):
+	if len(str) < max_len:
+		return str
+	left = int(max_len * 0.8)
+	right = int(max_len - left)
+	return str[0:left-len(marker)] + marker + str[-right:]
 
 
 if __name__ == '__main__':
