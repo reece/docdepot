@@ -52,7 +52,12 @@ class PubMedArticle:
 
 	@property
 	def jrnl(self):
-		return( self._get('Journal/ISOAbbreviation') )
+		j = self._get('Journal/ISOAbbreviation')
+		if j is None:
+			# e.g., http://www.ncbi.nlm.nih.gov/pubmed?term=21242195
+			j = self._get('Journal/Title')
+		assert j is not None
+		return j
 
 	@property
 	def pages(self):
