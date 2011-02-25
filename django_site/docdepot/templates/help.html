@@ -6,54 +6,17 @@
 
 {% block content %}
 
+<h2>The Locus Library</h2>
+
+<p>The Locus Library is a repository of scientific publications for use by
+Locus employees.  For more information, please
+see <a href="https://docs.google.com/a/locusdev.net/document/d/1uOCnWvJL1tRHIvo0_D6LBrYADjjyz8n8ss-2UTFM-Sg/edit?hl=en&authkey=CPOCg-UD">internal
+documentation (authorization required)</a>.</p>
+
 <div class="note important">
   The Locus Library is restricted to employees of Locus Development.
   Other users will be denied access and are advised to not select this
   outside tool.
 </div>
-
-
-
-<h2>The Locus Library</h2>
-
-<p>The Locus Library is a repository of scientific publications for use by
-Locus employees.  The Library has two primary interfaces: a shared folder
-that contains all documents and a simple web service that queries the
-repository by PubMed id. The web service makes it possible to access the
-Locus Library directly from NCBI's PubMed web site.</p>
-
-<h3>The Shared Folder</h3>
-<p>All documents are stored in a shared filesystem.  These files are
-completely browsable.  Files placed in the incoming folder will be
-automatically refiled by PubMed id, author, and other metadata.  Employees
-will be given access to the shared folder as needed.</p>
-
-<h3>The Web Service</h3>
-<p>The Locus Library is intended to be accessed directly from PubMed using
-links displayed by NCBI on our behalf.  The library is not browsable via a
-web interface.  Users may enable the Locus Library service by:</p>
-
-<div class="note important">
-N.B. These methods URL will not work correctly until our Outside Tool
-application with NCBI is approved.
-</div>
-
-<ul>
-  <li>Entering PubMed via a URL that specifies the otool parameter:
-	<br><a href="http://www.ncbi.nlm.nih.gov/pubmed?otool=locuslibrary">http://www.ncbi.nlm.nih.gov/pubmed?otool=locuslibrary</a>
-  <li>Selecting Locus Library as the Outside Tool in
-  their <a href="http://www.ncbi.nlm.nih.gov/sites/myncbi/">MyNCBI</a>
-  preferences.
-</ul>
-
-<p>When enabled, users should see this button on PubMed result pages:
-<img src="/static/media/locus-library-otool.gif"/>.</p>
-
-
-<h3>Links</h3>
-<ul>
-  <li><a href="http://www.ncbi.nlm.nih.gov/books/NBK3803/">More information on the NCBI Outside Tool service</a>
-  <li><a href="mailto:locuslibrary@locusdev.net?Subject=Locus%20Library">Send mail to the maintainers</a>
-</ul>
 
 {% endblock %}
