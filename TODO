@@ -11,3 +11,4 @@ SHOULD
 LATER
 * openid login
 * RSS-feeds
+* consider separate library + cl tools from web site (or change layout)
