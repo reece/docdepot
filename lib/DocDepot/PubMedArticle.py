@@ -28,6 +28,7 @@ class PubMedArticle:
 		return( self._get('Abstract/AbstractText') )
 
 	@property
+	# N.B. Citations may have 0 authors. e.g., pmid:7550356
 	def authors(self):
 		authors = [ _au_to_Last_FM(au) for au in self.art.findall('AuthorList/Author') ]
 		return authors
@@ -37,11 +38,13 @@ class PubMedArticle:
 		return( '; '.join(self.authors) )
 
 	@property
+	#FIXME: sync with authors()
 	def author1_lastfm(self):
 		"""return first author's name, in format LastINITS"""
-		au1 = self.art.find('AuthorList/Author')
-		assert au1 is not None
-		return _au_to_Last_FM(au1)
+		try:
+			au1 = [ _au_to_Last_FM(au1) for au in self.art.find('AuthorList/Author') ]
+		finally:
+			return None
 
 	@property
 	def LastFM1(self):

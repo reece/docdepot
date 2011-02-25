@@ -51,8 +51,7 @@ class Filer:
 			src = os.path.join(in_rp,bn)
 			self.logger.debug('processing '+src)
 			try:
-				dsts = self.generate_fullpaths(src)
-				self.refile(src,dsts,op=op)
+				self.refile(src,op=op)
 				# TODO: Caller should remove.  Possible implementation:
 				# loop here, but create a new process1 method that can be
 				# overridden by subclass and handle success/failure with
@@ -64,7 +63,14 @@ class Filer:
 				self.logger.error(e)
 				self.refile_error(src)
 
-	def refile(self,src,dsts,op='ln'):
+	def refile(self,src,dsts=None,op='ln'):
+		if dsts is None:
+			# FIXME: This function takes dsts solely for the benefit of
+			# refile_errors, which is a thinko.  Do this: move error
+			# handling out of this class (incl. refile_error), have dsts
+			# determined exlusively within this function, and don't take
+			# it as an argument.
+			dsts = self.generate_fullpaths(src)
 		for dst in dsts:
 			#  handle cases when dst exists
 			if os.path.exists(dst):
