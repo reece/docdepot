@@ -70,11 +70,16 @@ class PubMedArticle:
 	@property
 	def voliss(self):
 		ji = self.art.find('Journal/JournalIssue')
-		if ji.find('Volume') is None:
-			return
-		if ji.find('Issue') is None:
-			return ji.find('Volume').text
-		return( '%s(%s)' % (ji.find('Volume').text,ji.find('Issue').text) )
+		try:
+			return( '%s(%s)' % (ji.find('Volume').text,
+								ji.find('Issue').text) )
+		except AttributeError:
+			pass
+		try:
+			return( ji.find('Volume') )
+		except AttributeError:
+			pass
+		raise Exception("no volume for this publication")
 
 	@property
 	def year(self):
@@ -111,13 +116,21 @@ def _fetch_article(pmid):
 def _au_to_Last_FM(au):
 	if au is None:
 		return
-	lastfm = None
-	if au.find('CollectiveName') is not None:
-		lastfm = au.find('CollectiveName').text
-	if au.find('LastName') is not None:
-		lastfm = au.find('LastName').text + u' ' + au.find('Initials').text 
-	assert lastfm is not None
-	return lastfm
+	try:
+		return( au.find('LastName').text
+				+ u' ' + au.find('Initials').text )
+	except AttributeError:
+		pass
+	try:
+		return( au.find('CollectiveName').text )
+	except AttributeError:
+		pass
+	try:
+		return( au.find('LastName').text )
+	except AttributeError:
+		pass
+	raise Exception('no author for this publication')
+
 
 # This helps debug:
 # curl 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=19483685'
