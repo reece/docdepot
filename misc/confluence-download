@@ -6,6 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Confluence;
 
+
 my ($rpc_url,$user,$pw,$space,$page_id) = @ARGV;
 # https://confluence.locusdev.net/rpc/xmlrpc user pw library 3015452
 
@@ -20,7 +21,10 @@ for(my $i=0; $i<$N; $i++) {
   my $dst = "dl/$atti->{fileName}";
 
   next if ( -e $dst );
+
   if ($atti->{title} =~ m/(?:18644040)_/) {
+	# This title contains UTF-8 chars. Since there's only one of these,
+	# I just skipped it and downloaded manually.
 	warn("$i/$N. $atti->{title} ignored\n");
 	next;
   }
