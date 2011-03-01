@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
 import logging,os,sys
+logging.basicConfig(level=logging.DEBUG,
+					format="%(asctime)s %(levelname)s %(message)s")
+logging.info("Started "+sys.argv[0])
+
 
 sys.path += [os.path.join(
 	os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
@@ -9,6 +13,5 @@ sys.path += [os.path.join(
 import DocDepot
 from DocDepot.FilerMaster import FilerMaster
 
-logging.basicConfig(level=logging.DEBUG)
 
 FilerMaster().process_incoming()
