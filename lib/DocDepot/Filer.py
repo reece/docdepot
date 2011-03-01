@@ -58,10 +58,11 @@ class Filer:
 				# FilerDone/FilerError
 				os.remove(src)
 			except Exception as e:
-				# FIXME: catching "Exceptions" makes debugging painful.
-				# Be more careful about what's caught
-				self.logger.error(e)
-				self.refile_error(src)
+				# instead of logging errors, make them abort
+				# (else we won't really pay attention)
+				raise
+				#self.logger.error(e)
+				#self.refile_error(src)
 
 	def refile(self,src,dsts=None,op='ln'):
 		if dsts is None:
