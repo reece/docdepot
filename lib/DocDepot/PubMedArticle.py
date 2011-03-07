@@ -76,7 +76,7 @@ class PubMedArticle:
 		except AttributeError:
 			pass
 		try:
-			return( ji.find('Volume') )
+			return( ji.find('Volume').text )
 		except AttributeError:
 			pass
 		raise Exception("no volume for this publication")
