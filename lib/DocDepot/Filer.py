@@ -49,7 +49,7 @@ class Filer:
 		in_rp = os.path.join(self.files_path, self.in_dir)
 		for bn in os.listdir(in_rp):
 			src = os.path.join(in_rp,bn)
-			self.logger.debug('processing '+src)
+			self.logger.info('processing '+src)
 			try:
 				self.refile(src,op=op)
 				# TODO: Caller should remove.  Possible implementation:

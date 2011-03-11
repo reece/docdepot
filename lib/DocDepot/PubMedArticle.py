@@ -72,7 +72,10 @@ class PubMedArticle:
 			return( ji.find('Volume').text )
 		except AttributeError:
 			pass
-		raise Exception("no volume for this publication")
+		# electronic pubs may not have volume or issue
+		# e.g., http://www.ncbi.nlm.nih.gov/pubmed?term=20860988
+		logger.info("No volume for "+self.pmid)
+		return None
 
 	@property
 	def year(self):
