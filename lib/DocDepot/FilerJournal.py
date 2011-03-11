@@ -25,7 +25,7 @@ class FilerJournal(Filer.Filer):
 		vi = pma.voliss
 		if vi is None:
 			vi = u''
-		au1 = pma.author1_lastfm
+		au1 = pma.author1_LastFM
 		if au1 is None:
 			au1 = u''
 		afxs = os.path.join( pma.jrnl, y, vi, u'%s: %s' % (au1,ti) )

@@ -38,17 +38,10 @@ class PubMedArticle:
 		return( '; '.join(self.authors) )
 
 	@property
-	#FIXME: sync with authors()
-	def author1_lastfm(self):
+	def author1_LastFM(self):
 		"""return first author's name, in format LastINITS"""
-		try:
-			au1 = [ _au_to_Last_FM(au1) for au in self.art.find('AuthorList/Author') ]
-		finally:
-			return None
-
-	@property
-	def LastFM1(self):
-		return self.author1_lastfm
+		au1 = _au_to_Last_FM(self.art.find('AuthorList/Author'))
+		return au1
 
 	@property
 	def jrnl(self):
@@ -129,7 +122,7 @@ def _au_to_Last_FM(au):
 		return( au.find('LastName').text )
 	except AttributeError:
 		pass
-	raise Exception('no author for this publication')
+	raise Exception("Author structure not recognized")
 
 
 # This helps debug:

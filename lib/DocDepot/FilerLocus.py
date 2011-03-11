@@ -13,7 +13,7 @@ class FilerLocus(Filer.Filer):
 			if pmid is None:
 				return []
 		pma = PubMedArticle.PubMedArticle(pmid)
-		return [u'{0.pmid}_{0.year}_{0.jrnl}_{0.LastFM1}'.format(pma)]
+		return [u'{0.pmid}_{0.year}_{0.jrnl}_{0.author1_LastFM}'.format(pma)]
 
 
 if __name__ == '__main__':
