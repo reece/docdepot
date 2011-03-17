@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+
+use Bio::DB::EUtilities;
+
+my $x = get_record($ARGV[0]);
+die Dumper $x;
+
+
+sub get_record {
+  my $pmid = shift;
+  my $f = Bio::DB::EUtilities->new(-eutil => 'efetch',
+								   -db => 'pubmed',
+								   -id => $pmid);
+  return $f->get_Response->content();
+}
+
+

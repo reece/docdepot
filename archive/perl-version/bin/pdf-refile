@@ -1,0 +1,243 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Bio::DB::EUtilities;
+use Data::Dumper;
+use Digest::SHA;
+use File::Basename qw(basename dirname fileparse);
+use File::Copy;
+use File::Path qw(mkpath);
+use File::Spec;
+use Getopt::Long qw(:config gnu_getopt);
+use IO::Pipe;
+use Log::Log4perl;
+use PDF::API2;
+use POSIX qw(strftime);
+use XML::Simple;
+
+use FindBin;
+use lib "$FindBin::RealBin/../lib/perl5";
+
+
+use constant bar => '='x76;
+
+sub compute_sha1 ($);
+sub digest_dirhash ($);
+sub doi_dirhash ($);
+sub doi_to_pmids ($);
+sub dois_from_file ($);
+sub filter_dois (@);
+sub get_records (@);
+sub my_mkpath ($);
+sub pmid_dirhash ($);
+sub extract_dois ($);
+
+my %opts;
+%opts = (
+		 root_dir 		=> File::Spec->catfile( dirname($0), '..', 'tree' )   ,
+
+		 incoming_rdir	=> 'incoming',
+		 log_rdir    	=> 'log',
+		 sha1_rdir  	=> 'sha1',
+		 doi_rdir 		=> 'doi',
+		 submitter_rdir => 'submitter',
+		 date_rdir		=> 'date',
+		 pmid_rdir		=> 'pubmed/id',
+		 jrnl_rdir		=> 'journal'
+		);
+
+Getopt::Long::GetOptions( \%opts,
+						  'root_dir|R=s'
+						)
+  || die("$0: usage\n");
+
+
+for my $src_fn (@ARGV) {
+  my %fileinfo;
+
+  # BASIC FILE INFO
+  my ($root,$dirname,$sepsfx) = fileparse($src_fn, qr/\.[^.]+$/);
+  @fileinfo{qw(src_fn root dirname sepsfx)}
+	= ( $src_fn, $root, $dirname, lc($sepsfx) );
+
+  # SHA1
+  $fileinfo{sha1} = compute_sha1($src_fn);
+  $fileinfo{sha1_rpath} = File::Spec->catfile( $opts{sha1_rdir},
+											   digest_dirhash($fileinfo{sha1}) );
+  $fileinfo{sha1_dstfn} = File::Spec->catfile($fileinfo{sha1_rpath},
+											  "$fileinfo{sha1}");
+
+  # DOI
+  my @dois = filter_dois( dois_from_file($src_fn) );
+  if ($#dois == -1) {
+	warn("$src_fn: no DOIs found.\n");
+  } elsif ($#dois > 1) {
+	warn("$src_fn: more than one DOI found; skipping.\n");
+  } else {
+	$fileinfo{doi} = $dois[0];
+	$fileinfo{doi_rpath} = File::Spec->catfile( $opts{doi_rdir},
+												doi_dirhash($fileinfo{doi}) );
+	$fileinfo{doi_dstfn} = File::Spec->catfile( $fileinfo{doi_rpath},
+												basename($fileinfo{doi}) );
+  }
+
+  # PUBMED
+  if ( defined $fileinfo{doi} ) {
+	my @pmids = doi_to_pmids( $fileinfo{doi} );
+	if ($#pmids == -1) {
+	  warn("$src_fn: no PubMed ids found.\n");
+	} elsif ($#pmids > 1) {
+	  warn("$src_fn: more than one PubMed ids found; skipping.\n");
+	} else {
+	  $fileinfo{pmid} = $pmids[0];
+
+	  my $response = get_records( $fileinfo{pmid} );
+	  my $ref = XMLin( $response );
+	  my $mlca = $ref->{PubmedArticle}->{MedlineCitation}->{Article};
+	  $fileinfo{title} = $mlca->{ArticleTitle};
+	  $fileinfo{abstract} = $mlca->{Abstract}->{AbstractText};
+
+
+	  # -- pubmed id
+	  $fileinfo{pmid_rpath} = File::Spec->catfile( $opts{pmid_rdir},
+												   pmid_dirhash($fileinfo{pmid}) );
+	  $fileinfo{pmid_dstfn} = File::Spec->catfile( $fileinfo{pmid_rpath},
+												  basename($fileinfo{pmid}) );
+
+	  # -- journal
+	  $fileinfo{jrnl} = $mlca->{Journal}->{ISOAbbreviation};
+	  $fileinfo{volume} = $mlca->{Journal}->{JournalIssue}->{Volume};
+	  $fileinfo{issue} = $mlca->{Journal}->{JournalIssue}->{Issue};
+	  $fileinfo{page} = $mlca->{Pagination}->{MedlinePgn};
+	  $fileinfo{jrnl_rpath} = File::Spec->catfile( $opts{jrnl_rdir},
+												   @fileinfo{qw(jrnl volume issue)} );
+	  $fileinfo{jrnl_dstfn} = File::Spec->catfile( $fileinfo{jrnl_rpath},
+												   $fileinfo{title} );
+
+	  # -- date
+	  # TODO: ArticleDate always defined?  e.g. nrg1916.pdf
+	  $fileinfo{date} = sprintf("%4d/%02d/%02d",
+								@{$mlca->{ArticleDate}}{qw(Year Month Day)} );
+	  $fileinfo{date_rpath} = File::Spec->catfile( $opts{date_rdir},
+													 ( map { sprintf('%02d',$_) }
+													   @{$mlca->{ArticleDate}}{qw(Year Month Day)} ) );
+	  $fileinfo{date_dstfn} = File::Spec->catfile( $fileinfo{date_rpath},
+												   $fileinfo{title} );
+
+	  my $mlca_aa = $mlca->{AuthorList}->{Author};
+	  my @authors = ( ref( $mlca_aa ) eq 'ARRAY' ? @$mlca_aa : ($mlca_aa) );
+	  @{$fileinfo{authors}} = map { "$_->{LastName} $_->{Initials}" } @authors;
+
+	  print bar, "\n", Dumper($ref);
+	}
+  }
+
+  print bar, "\n", Dumper(\%fileinfo);
+
+}
+
+
+exit;
+
+
+sub compute_sha1 ($) {
+  my ($fn) = @_;
+  my $sha_length = 1;
+  my $ctx = Digest::SHA->new($sha_length);
+  $ctx->addfile($fn);
+  return $ctx->hexdigest();
+}
+
+sub digest_dirhash ($) {
+  my $digest = shift;
+  my $hash_re = qr/^(..)(..)(..)(..)(..)(..)/;
+  my @hash_elems = $digest =~ $hash_re;
+  return File::Spec->catfile(@hash_elems);
+}
+
+sub doi_dirhash ($) {
+  my $doi = shift;
+  my $hash_re = qr/^(10.\d+)\/(\D+)(\d+)/;
+  my @hash_elems = $doi =~ $hash_re;
+  return File::Spec->catfile(@hash_elems);
+}
+
+sub pmid_dirhash ($) {
+  my $pmid = shift;
+  my $hash_re = qr/^(\d{3})(\d{3})(\d{2,})/;
+  my @hash_elems = $pmid =~ $hash_re;
+  return File::Spec->catfile(@hash_elems);
+}
+
+sub my_mkpath ($) {
+  my $dir = shift;
+  ( -d $dir )
+	|| mkpath($dir,0,0777)
+	|| warn("$0: mkpath($dir): $!\n");
+}
+
+sub dois_from_file ($) {
+  my $fn = shift;
+  my @cmd = qw(pdftotext -q);
+  my ($body, @dois, $p);
+
+  # NB: Searching for the DOI on just the first page fails for
+  # concatenated articles, especially editorials, that are distributed a
+  # single PDF.  For example, NEJM DOIs are at the end of the article and
+  # editorials are concatenated.  That leads to situations like (1) that
+  # starts in the middle of the page; the DOI on the first page is from
+  # the *previous* editorial.  (1)
+  # http://www.ncbi.nlm.nih.gov/pubmed/19369656
+
+  $p = new IO::Pipe;
+  if (not $p->reader(@cmd, $fn, '-') ) {
+	warn("$fn: $!\n");
+	return;
+  }
+  { undef $/; $body = <$p>; }
+  $p->close();
+  return extract_dois($body);
+}
+
+sub extract_dois ($) {
+  # Some heinous examples:
+  # doi:10.1016/S0015-0282(03)02210-6   -- internal ()
+  # 'yada yada (doi:10.1016/S0012-345)' -- doi in parenthetical remark
+  # intentionally returned in order, potentially with duplicates
+  my $doi_re = qr/(10\.\d{4}\/\S+\w)/;	# must end with \w!
+  return map { m/$doi_re/g } @_;
+}
+
+sub filter_dois (@) {
+  # Removes dois from list that are merely an affix of some prefix doi
+  # In practice, this removes dois for supplemental data and figures.
+  my @dois = sort {length($a) <=> length($b)} @_;
+  my %dois = map {$_=>1} @dois;
+  for(my $i=0; $i<$#dois; $i++) {
+	my $pfx = $dois[$i];
+	my @affix_indexes = grep {$dois[$_] =~ m/$pfx[\.\/]/} 0..$#dois;
+	splice(@dois,$_,1) for reverse @affix_indexes;
+  }
+  return @dois;
+}
+
+sub doi_to_pmids ($) {
+  my $doi = $_[0];
+  my $f = Bio::DB::EUtilities->new(-eutil => 'esearch',
+								   -db => 'pubmed',
+								   -term => "$doi [doi]");
+  my @ids = $f->get_ids();
+  return (@ids);
+}
+
+sub get_records (@) {
+  my @pmids = @_;
+  my $f = Bio::DB::EUtilities->new(-eutil => 'efetch',
+								   -db => 'pubmed',
+								   -id => \@pmids);
+  return $f->get_Response->content();
+}
+
+

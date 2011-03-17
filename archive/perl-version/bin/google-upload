@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ $# != ]; then
+	cat <<EOF 1>&2
+usage error
+eg$ $(basename "$0") <file> <id> <pass> <folder>
+where 
+  <file> is the file to be uploaded
+  <id> is your google login (e.g., reece.hart@locusdev.net)
+  <pass> is your google password
+  <folder> is the *existing* document folder/tag
+EOF
+	exit 1
+fi
+
+exec java -jar google-docs-upload-1.4.2.jar "$1" -u "$2" -p "$3" --remote-folder "$4"

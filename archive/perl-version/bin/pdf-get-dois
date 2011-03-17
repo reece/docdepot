@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+# pdf-get-pmid -- get the PubMed id for a PDF
+
+use strict;
+use warnings;
+use IO::Pipe;
+
+sub dois_from_file ($);
+sub extract_dois ($);
+sub filter_dois (@);
+
+for my $src_fn (@ARGV) {
+  my @dois = filter_dois( dois_from_file($src_fn) );
+  exit 1 unless @dois;
+  print(join("\n",@dois),"\n");
+}
+
+exit;
+
+
+sub dois_from_file ($) {
+  my $fn = shift;
+  my @cmd = qw(pdftotext -q);
+  my ($body, @dois, $p);
+
+  # NB: Searching for the DOI on just the first page fails for
+  # concatenated articles, especially editorials, that are distributed a
+  # single PDF.  For example, NEJM DOIs are at the end of the article and
+  # editorials are concatenated.  That leads to situations like (1) that
+  # starts in the middle of the page; the DOI on the first page is from
+  # the *previous* editorial.  (1)
+  # http://www.ncbi.nlm.nih.gov/pubmed/19369656
+
+  $p = new IO::Pipe;
+  if (not $p->reader(@cmd, $fn, '-') ) {
+	warn("$fn: $!\n");
+	return;
+  }
+  { undef $/; $body = <$p>; }
+  $p->close();
+  return extract_dois($body);
+}
+
+sub extract_dois ($) {
+  # Some heinous examples:
+  # doi:10.1016/S0015-0282(03)02210-6   -- internal ()
+  # 'yada yada (doi:10.1016/S0012-345)' -- doi in parenthetical remark
+  # intentionally returned in order, potentially with duplicates
+  my $doi_re = qr/(10\.\d{4}\/\S+\w)/;	# must end with \w!
+  return map { m/$doi_re/g } @_;
+}
+
+sub filter_dois (@) {
+  # Removes dois from list that are merely an affix of some prefix doi
+  # In practice, this removes dois for supplemental data and figures.
+  my @dois = sort {length($a) <=> length($b)} @_;
+  my %dois = map {$_=>1} @dois;
+  for(my $i=0; $i<$#dois; $i++) {
+	my $pfx = $dois[$i];
+	my @affix_indexes = grep {$dois[$_] =~ m/$pfx[\.\/]/} 0..$#dois;
+	splice(@dois,$_,1) for reverse @affix_indexes;
+  }
+  return @dois;
+}

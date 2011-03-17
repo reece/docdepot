@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+# doi-to-pmid -- get the PubMed ids for a doi
+
+use strict;
+use warnings;
+
+use Bio::DB::EUtilities;
+
+my @pmids = doi_to_pmids( $ARGV[0] );
+exit 1 unless (@pmids);
+print( join("\n",@pmids), "\n" );
+
+exit;
+
+
+sub doi_to_pmids {
+  my $doi = $_[0];
+  my $f = Bio::DB::EUtilities->new(-eutil => 'esearch',
+								   -db => 'pubmed',
+								   -term => "$doi [doi]");
+  my @ids = $f->get_ids();
+  return (@ids);
+}

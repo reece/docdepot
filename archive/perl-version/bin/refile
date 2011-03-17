@@ -1,0 +1,101 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Digest::SHA;
+use File::Basename qw(fileparse dirname);
+use File::Copy;
+use File::Path qw(mkpath);
+use Getopt::Long qw(:config gnu_getopt);
+use POSIX qw(strftime);
+
+sub compute_sha($);
+
+
+my %opts = (
+  paper_root => "$ENV{HOME}/papers",
+
+  incoming_dir => undef,
+  log_dir    => undef,
+
+  hash_dir  => undef,
+  submitter_dir => undef,
+  submit_date => undef,
+
+  sha_length => 1,
+  elems_re => qr/^(...)(...)(...)(...)(...)(...)/,
+);
+
+Getopt::Long::GetOptions( \%opts,
+						  'paper_root|p=s'
+						)
+  || die("$0: usage\n");
+
+(@ARGV)
+  && die("$0: no additional arguments expected\n");
+
+
+if (not defined $opts{incoming_dir}) {
+  $opts{incoming_dir} = "$opts{paper_root}/incoming";
+}
+if (not defined $opts{log_dir}) {
+  $opts{log_dir} = "$opts{paper_root}/log";
+}
+if (not defined $opts{hash_dir}) {
+  $opts{hash_dir} = "$opts{paper_root}/by-hash";
+}
+if (not defined $opts{submitter_dir}) {
+  $opts{hash_dir} = "$opts{paper_root}/by-hash";
+}
+
+
+
+
+my @dirents = ($opts{incoming_dir});
+
+while ( my $fn = shift(@dirents) ) {
+  if ( -d $fn ) {
+    unshift( @dirents, <$fn/*> );
+    next;
+  }
+
+  if ( not -f $fn ) {
+    next;
+  }
+
+  my $digest    = compute_sha($fn);
+  my @digest_elems = $digest =~ $opts{elems_re};
+  my $digest_subpath = join('/',@digest_elems);
+  my ($root,$dirname,$sepsfx) = fileparse($fn, qr/\.[^.]+$/);
+  $sepsfx = lc($sepsfx);
+
+  my $dest_dir = "$opts{hash_dir}/$digest_subpath";
+  my $dest_fn  = "$digest$sepsfx";
+  my $dest_path = "$dest_dir/$dest_fn";
+
+  ( -d $dest_dir ) 
+	|| mkpath($dest_dir,0,0777)
+	|| die("$0: mkpath($dest_dir): $!\n");
+
+  if (-f $dest_path) {
+	print(STDERR "$0: file $fn already hashed\n");
+	unlink($fn);
+  }
+  else {
+	rename($fn,$dest_path)
+	  || die("$0: rename($fn,$dest_path): $!\n");
+	print(STDERR "$fn -> $dest_path\n");
+  }
+
+  # submitter
+  # title
+}
+
+
+sub compute_sha($) {
+  my ($fn) = @_;
+  my $ctx = Digest::SHA->new($opts{sha_length});
+  $ctx->addfile($fn);
+  return $ctx->hexdigest();
+}
