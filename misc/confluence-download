@@ -8,7 +8,7 @@ use Confluence;
 
 
 my ($rpc_url,$user,$pw,$space,$page_id) = @ARGV;
-# https://confluence.locusdev.net/rpc/xmlrpc user pw library 3015452
+# http://confluence.locusdev.net/rpc/xmlrpc user pw library 3015452
 
 
 my $c = new Confluence($rpc_url, $user, $pw);
